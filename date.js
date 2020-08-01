@@ -5,9 +5,7 @@
 // we want to call getDate()/getDay function from date object
 
 // this module return curent date 
-module.exports.getDate = getDate;
-
-function getDate(){
+module.exports.getDate =  function(){
     let today = new Date();
     // this object pass for formate the date 
     let option = {
@@ -16,14 +14,11 @@ function getDate(){
         month:"long"
     };
 
-    return today.toLocaleDateString("en-US",option);
-    
-}
+    return today.toLocaleDateString("en-US",option);   
+};
 
 // this module return current day of the week
-module.exports.getDay = getDay;
-
-function getDay(){
+module.exports.getDay = function(){
     let today = new Date();
     // this object pass for formate the date 
     let option = {
@@ -32,4 +27,4 @@ function getDay(){
 
     return today.toLocaleDateString("en-US",option);
     
-}
+};

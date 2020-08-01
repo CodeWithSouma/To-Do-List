@@ -22,7 +22,7 @@ let work =[];
 
 // home route get request
 app.get("/",function(req,res){
-    let day = date.getDay();//call the getDate function using date module
+    let day = date.getDate();//call the getDate function using date module
     // here we pass current date as a list title and a array 
     res.render("list",{listTitle:day,newListItems:items});
 });
