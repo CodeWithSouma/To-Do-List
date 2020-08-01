@@ -6,6 +6,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { urlencoded } = require("body-parser");
+const date = require(__dirname+"/date.js");
+
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -20,15 +22,7 @@ let work =[];
 
 // home route get request
 app.get("/",function(req,res){
-    let today = new Date();
-    // this object pass for formate the date 
-    let option = {
-        weekday:"long",
-        day:"numeric",
-        month:"long"
-    };
-
-    let day = today.toLocaleDateString("en-US",option);
+    let day = date.getDay();//call the getDate function using date module
     // here we pass current date as a list title and a array 
     res.render("list",{listTitle:day,newListItems:items});
 });
