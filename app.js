@@ -1,6 +1,6 @@
 // ***********Main funda *********************
 // we collect data from the input field and make 
-// an array of items and pass that array back to the template 
+// an array of items/work and pass that array back to the template 
 // and iterate that array using foreach loop and and add the list item
 
 const express = require("express");
@@ -16,7 +16,7 @@ app.use(express.static("public"));
 // global veriable
 // initially we set these 3 item 
 let items =["Buy Food","Cook Food","Eat Food"];
-
+let work =[];
 
 // home route get request
 app.get("/",function(req,res){
@@ -29,23 +29,43 @@ app.get("/",function(req,res){
     };
 
     let day = today.toLocaleDateString("en-US",option);
-    // here we pass current date and a array 
-    res.render("list",{kindOfDay:day,newListItems:items});
+    // here we pass current date as a list title and a array 
+    res.render("list",{listTitle:day,newListItems:items});
+});
+
+// work route get get requset
+app.get("/work",function(req,res){
+    // here we pass work string as a list title and work array 
+    res.render("list",{listTitle:"Work",newListItems:work});
 });
 
 // home route post request
 app.post("/",function(req,res){
-
+    
     // we take the item from post request, 
     // if it is not empty string then push it 
     // into the items array 
      item = req.body.newItem.trim();
-     if(item!==""){
-        items.push(item);
-     }
-    // console.log(item);
-    res.redirect("/");
+    //  if template title /Button value = Work then push the element
+    // into the work array and redirect route to /work otherwise push
+    // the element into the items array and redirect to / route
+    if(req.body.button === "Work"){
+        if(item!==""){
+            work.push(item);
+         }
+        // console.log(item);
+        res.redirect("/work");
+    }
+    else{
+        if(item!==""){
+            items.push(item);
+         }
+        // console.log(item);
+        res.redirect("/");
+    }
 });
+
+
 // server start deploy port 
 app.listen(3000,function(){
     console.log("Server is Ranning at port 3000.")
