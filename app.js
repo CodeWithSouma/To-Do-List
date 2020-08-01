@@ -10,6 +10,8 @@ const { urlencoded } = require("body-parser");
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended:true}));
+// this is a static resource or public resource
+app.use(express.static("public"));
 
 // global veriable
 // initially we set these 3 item 
