@@ -39,6 +39,12 @@ app.get("/work",function(req,res){
     res.render("list",{listTitle:"Work",newListItems:work});
 });
 
+// about route 
+app.get("/about",function(req,res){
+    // we send about page
+    res.render("about");
+})
+
 // home route post request
 app.post("/",function(req,res){
     
