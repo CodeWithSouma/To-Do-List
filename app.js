@@ -28,8 +28,7 @@ const itemsSchema = new mongoose.Schema({
 
 // this model is use for item 
 const Item = new mongoose.model("Item",itemsSchema);
-// this model is use for work
-const Work = new mongoose.model("Work",itemsSchema);//we use same schema for work model
+
 
 //create 3 document for default 3 item
 const item1 = new Item({
@@ -71,32 +70,6 @@ app.get("/",function(req,res){
     
 });
 
-// work route get get requset
-app.get("/work",function(req,res){
-    //fetch all work and put into ejs template
-    Work.find({},function(err,foundWork){
-        if (foundWork.length === 0) {
-            Work.insertMany(defaultItems,function(err){
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("Default items are succesfully saved into DB.");
-                }
-            });
-            //redirect route to /work
-            res.redirect("/work");
-        } else {
-
-         // here we pass work string as a list title and work array 
-        res.render("list",{listTitle:"Work",newListItems:foundWork});
-
-        }
-
-    });
-
-    
-});
-
 // about route 
 app.get("/about",function(req,res){
     // we send about page
@@ -106,31 +79,32 @@ app.get("/about",function(req,res){
 // home route post request
 app.post("/",function(req,res){
     
-    // we take the item from post request, 
-    // if it is not empty string then push it 
-    // into the items array 
+    
      item = req.body.newItem.trim();
-    //  if template title /Button value = Work then push the element
-    // into the work array and redirect route to /work otherwise push
-    // the element into the items array and redirect to / route
-    if(req.body.button === "Work"){
-        if(item!==""){
-            const newWork = new Work({name:item});
-            newWork.save();
-         }
-        // console.log(item);
-        res.redirect("/work");
-    }
-    else{
-        if(item!==""){
-            //insert item into database
-            const newItem = new Item({name:item});
-            newItem.save();
-         }
-        // console.log(item);
-        res.redirect("/");
-    }
 
+    if(item!==""){
+        //insert item into database
+        const newItem = new Item({name:item});
+        newItem.save();
+    }
+    // console.log(item);
+    res.redirect("/");
+   
+
+});
+
+
+// /delete route 
+app.post("/delete",function(req,res){
+    const checkedItemId = req.body.checkbox;
+    Item.deleteOne({_id:checkedItemId},function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("the item was succesfully deleted.");
+        }
+        res.redirect("/");
+    })
 });
 
 
