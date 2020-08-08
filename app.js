@@ -26,8 +26,11 @@ const itemsSchema = new mongoose.Schema({
     }
 });
 
-// create a model
+// this model is use for item 
 const Item = new mongoose.model("Item",itemsSchema);
+// this model is use for work
+const Work = new mongoose.model("Work",itemsSchema);//we use same schema for work model
+
 //create 3 document for default 3 item
 const item1 = new Item({
     name:"Wellcome to todo list"
@@ -43,15 +46,11 @@ const item3 = new Item({
 // default item array
 const defaultItems = [item1,item2,item3];
 
-/*// global veriable
-// initially we set these 3 item 
-let items =["Buy Food","Cook Food","Eat Food"];*/
-let work = [];
 
 // home route get request
 app.get("/",function(req,res){
     let day = date.getDate();//call the getDate function using date module
-    //fetch all data and put into ejs template and send file
+    //fetch all items and put into ejs template and send file
     Item.find({},function(err,foundItem){
     
         if(foundItem.length === 0){
@@ -60,7 +59,7 @@ app.get("/",function(req,res){
                 if(err)
                     console.log(err);
                 else
-                    console.log("Succesfully default item are saved into DB.");
+                    console.log("Default items are succesfully saved into DB.");
             });
             //saved default item and redirect to / route
             res.redirect("/");
@@ -74,8 +73,28 @@ app.get("/",function(req,res){
 
 // work route get get requset
 app.get("/work",function(req,res){
-    // here we pass work string as a list title and work array 
-    res.render("list",{listTitle:"Work",newListItems:work});
+    //fetch all work and put into ejs template
+    Work.find({},function(err,foundWork){
+        if (foundWork.length === 0) {
+            Work.insertMany(defaultItems,function(err){
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log("Default items are succesfully saved into DB.");
+                }
+            });
+            //redirect route to /work
+            res.redirect("/work");
+        } else {
+
+         // here we pass work string as a list title and work array 
+        res.render("list",{listTitle:"Work",newListItems:foundWork});
+
+        }
+
+    });
+
+    
 });
 
 // about route 
@@ -96,7 +115,8 @@ app.post("/",function(req,res){
     // the element into the items array and redirect to / route
     if(req.body.button === "Work"){
         if(item!==""){
-            work.push(item);
+            const newWork = new Work({name:item});
+            newWork.save();
          }
         // console.log(item);
         res.redirect("/work");
@@ -110,7 +130,7 @@ app.post("/",function(req,res){
         // console.log(item);
         res.redirect("/");
     }
-    
+
 });
 
 
