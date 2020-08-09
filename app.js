@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
 
 //connect mongodb database 
-mongoose.connect('mongodb://localhost/todolistDB', {useNewUrlParser: true,useUnifiedTopology: true});
+mongoose.connect('mongodb+srv://CodeWithSouma:Soumadip1@cluster0.uiz3t.mongodb.net/todolistDB?retryWrites=true&w=majority', {useNewUrlParser: true,useUnifiedTopology: true});
 // we create a item schema
 const itemsSchema = new mongoose.Schema({
     name:{
@@ -105,9 +105,7 @@ app.post("/",function(req,res){
 
     const item = req.body.newItem.trim();
     const listName = req.body.button;
-    console.log(req.body.button);
     
-
     if(listName === "Today"){
         if(item!==""){
             //insert item into database
@@ -119,12 +117,11 @@ app.post("/",function(req,res){
     else{
         List.findOne({name:listName},function(err,foundList){
             foundList.items.push({name:item});
-            foundList.save();
+            foundList.save();  
         });
         res.redirect("/"+listName);
         
-    }
-      
+    }      
 
 });
 
