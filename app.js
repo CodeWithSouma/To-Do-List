@@ -1,13 +1,9 @@
-// ***********Main funda *********************
-// we collect data from the input field and make 
-// an array of items/work and pass that array back to the template 
-// and iterate that array using foreach loop and and add the list item
 
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { urlencoded } = require("body-parser");
-const date = require(__dirname+"/date.js");
+// const date = require(__dirname+"/date.js");
 
 
 const app = express();
@@ -26,9 +22,16 @@ const itemsSchema = new mongoose.Schema({
     }
 });
 
+//create a new schema for custom list
+const listSchema = new mongoose.Schema({
+    name:String,
+    items:[itemsSchema]
+});
+
 // this model is use for item 
 const Item = new mongoose.model("Item",itemsSchema);
-
+//this model is use for custom list
+const List = new mongoose.model("List",listSchema);
 
 //create 3 document for default 3 item
 const item1 = new Item({
@@ -48,8 +51,7 @@ const defaultItems = [item1,item2,item3];
 
 // home route get request
 app.get("/",function(req,res){
-    let day = date.getDate();//call the getDate function using date module
-    //fetch all items and put into ejs template and send file
+   
     Item.find({},function(err,foundItem){
     
         if(foundItem.length === 0){
@@ -63,10 +65,32 @@ app.get("/",function(req,res){
             //saved default item and redirect to / route
             res.redirect("/");
         }else{
-            res.render("list",{listTitle:day,newListItems:foundItem});
+            res.render("list",{listTitle:"Today",newListItems:foundItem});
         }
         
     });
+    
+});
+
+// add a dynamic route using express route paramter
+app.get("/:customListName",function(req,res){
+    const customListName = req.params.customListName;
+
+    List.findOne({name:customListName},function(err,foundList){
+        if (!err) {
+            if (!foundList) {
+                const list = new List({
+                    name:customListName,
+                    items:defaultItems
+                });
+                list.save();
+                res.redirect("/"+customListName);
+            }else{
+                res.render("list",{listTitle:foundList.name,newListItems:foundList.items});
+            }
+        }
+    });
+
     
 });
 
@@ -78,18 +102,29 @@ app.get("/about",function(req,res){
 
 // home route post request
 app.post("/",function(req,res){
-    
-    
-     item = req.body.newItem.trim();
 
-    if(item!==""){
-        //insert item into database
-        const newItem = new Item({name:item});
-        newItem.save();
+    const item = req.body.newItem.trim();
+    const listName = req.body.button;
+    console.log(req.body.button);
+    
+
+    if(listName === "Today"){
+        if(item!==""){
+            //insert item into database
+            const newItem = new Item({name:item});
+            newItem.save();
+        }
+        res.redirect("/");
     }
-    // console.log(item);
-    res.redirect("/");
-   
+    else{
+        List.findOne({name:listName},function(err,foundList){
+            foundList.items.push({name:item});
+            foundList.save();
+        });
+        res.redirect("/"+listName);
+        
+    }
+      
 
 });
 
@@ -104,7 +139,7 @@ app.post("/delete",function(req,res){
             console.log("the item was succesfully deleted.");
         }
         res.redirect("/");
-    })
+    });
 });
 
 
