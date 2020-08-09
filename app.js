@@ -152,7 +152,7 @@ app.post("/delete",function(req,res){
 
 
 // server start deploy port 
-app.listen(3000,function(){
+app.listen(process.env.PORT || 3000,function(){
     console.log("Server is Ranning at port 3000.")
 });
 
