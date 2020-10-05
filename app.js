@@ -1,19 +1,26 @@
-
+const config = require('config');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { urlencoded } = require("body-parser");
+const helmet = require('helmet');
+const compression = require('compression');
 const _ = require('lodash');
 
 
 const app = express();
+app.use(helmet());
+app.use(compression());
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 // this is a static resource or public resource
 app.use(express.static("public"));
 
 //connect mongodb database 
-mongoose.connect('mongodb+srv://CodeWithSouma:Soumadip1@cluster0.uiz3t.mongodb.net/todolistDB?retryWrites=true&w=majority', {useNewUrlParser: true,useUnifiedTopology: true});
+const db = config.get('db');
+mongoose.connect(db, {useNewUrlParser: true,useUnifiedTopology: true})
+        .then(() => console.log(`Connected to ${db}`));
 // we create a item schema
 const itemsSchema = new mongoose.Schema({
     name:{
@@ -152,7 +159,8 @@ app.post("/delete",function(req,res){
 
 
 // server start deploy port 
-app.listen(process.env.PORT || 3000,function(){
-    console.log("Server is Ranning at port 3000.")
+const port = process.env.PORT || 3000;
+app.listen(port,function(){
+    console.log(`Server is Ranning at port ${port}...`);
 });
 
