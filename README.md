@@ -1,6 +1,8 @@
 # To-Do-List
 A simple javaScript based web application you can use it to manage to-do-list
 
+![](https://cdn.pixabay.com/photo/2020/01/21/18/39/todo-4783676_960_720.png)
+
 ## Setup
 Make sure to follow all these steps exactly as explained below. Do not miss any steps or you won't be able to run this application.
 
